@@ -178,9 +178,10 @@ int produce_message(struct flb_time *tm, msgpack_object *map,
                     /* Only if default topic is set and this topicname is not set for this message */
                     if (strncmp(topic->name, flb_kafka_topic_default(ctx)->name, val.via.str.size) == 0 &&
                         (strncmp(topic->name, val.via.str.ptr, val.via.str.size) != 0) ) {
-                        if (strstr(val.via.str.ptr, ",")) {
+                        if (strnstr(val.via.str.ptr, ",", val.via.str.size)) {
                             /* Don't allow commas in kafkatopic name */
                             flb_warn("',' not allowed in dynamic_kafka topic names");
+                            flb_plg_debug("Topic name: %s, Length: %s", val.via.str.ptr, val.via.str.size);
                             continue;
                         }
                         if (val.via.str.size > 64) {

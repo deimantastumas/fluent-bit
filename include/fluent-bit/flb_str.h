@@ -58,4 +58,25 @@ static inline char *flb_strndup(const char *s, size_t n)
     return str;
 }
 
+// https://github.com/lattera/freebsd/blob/master/lib/libc/string/strnstr.c
+static inline char *strnstr(const char *s, const char *find, size_t slen)
+{
+	char c, sc;
+	size_t len;
+
+	if ((c = *find++) != '\0') {
+		len = strlen(find);
+		do {
+			do {
+				if (slen-- < 1 || (sc = *s++) == '\0')
+					return (NULL);
+			} while (sc != c);
+			if (len > slen)
+				return (NULL);
+		} while (strncmp(s, find, len) != 0);
+		s--;
+	}
+	return ((char *)s);
+}
+
 #endif
